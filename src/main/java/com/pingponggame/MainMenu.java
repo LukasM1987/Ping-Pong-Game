@@ -32,10 +32,20 @@ public class MainMenu extends GUIState {
     public void update(){
 
     }
+
     public void draw(Graphics g){
+        drawGraphics(g);
+        drawMenuOptions(g);
+
+    }
+
+    private void drawGraphics(Graphics g) {
         g.drawImage(backgroundImage, 0, 0, null);
         g.drawImage(logoImage, (GameEngine.WIDTH / 2) - (logoImage.getWidth() / 2), 15, null);
         g.setFont(new Font("Arial", Font.PLAIN, 32));
+    }
+
+    private void drawMenuOptions(Graphics g) {
         for (int i = 0; i < options.length; i++) {
             if (i == currentChoice) {
                 g.setColor(Color.YELLOW);
@@ -45,6 +55,7 @@ public class MainMenu extends GUIState {
             g.drawString(options[i], (GameEngine.WIDTH / 2) - 80, 260 + i * 30);
         }
     }
+
     private void selectMenuOption(){
         if(currentChoice == 0){
             GUIStateManager.setStates(GUIStateManager.SET_DIFFICULTY);
@@ -55,10 +66,11 @@ public class MainMenu extends GUIState {
         }
 
         if(currentChoice == 2){
-            new Exit();
+            exitGame();
         }
     }
 
+    @Override
     public void onKeyPressed(KeyEvent key){
         if (key.getKeyCode() == KeyEvent.VK_ENTER) {
             selectMenuOption();
@@ -80,5 +92,9 @@ public class MainMenu extends GUIState {
     @Override
     public void onKeyReleased(KeyEvent key) {
 
+    }
+
+    private void exitGame() {
+        System.exit(0);
     }
 }

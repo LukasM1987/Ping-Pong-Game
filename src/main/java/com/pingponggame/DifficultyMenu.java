@@ -51,6 +51,11 @@ public class DifficultyMenu extends GUIState {
 
     @Override
     public void draw(Graphics g) {
+        setGraphics(g);
+        setMenuOptions(g);
+    }
+
+    private void setGraphics(Graphics g) {
         g.setColor(new Color(11,176, 55));
         g.fillRect(0, 0, GameEngine.WIDTH, GameEngine.HEIGHT);
         g.drawImage(logoImage, (GameEngine.WIDTH / 2) - (logoImage.getWidth() / 2), 15, null);
@@ -61,6 +66,9 @@ public class DifficultyMenu extends GUIState {
         g.drawString("SET GAME DIFFICULTY", (GameEngine.WIDTH / 2) - 160, GameEngine.HEIGHT / 2);
         g.drawString(difficultyPercent + "%", (GameEngine.WIDTH / 2) - 24, GameEngine.HEIGHT / 2 + 40);
         g.setFont(new Font("Arial", Font.PLAIN, 32));
+    }
+
+    private void setMenuOptions(Graphics g) {
         for (int i = 0; i < menuOptions.length; i++) {
             if (i == currentChoiceMenu) {
                 g.setColor(Color.YELLOW);

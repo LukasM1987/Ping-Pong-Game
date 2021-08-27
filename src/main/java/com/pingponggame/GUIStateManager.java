@@ -8,13 +8,15 @@ import java.util.List;
 public class GUIStateManager {
 
 
-    private static final List<GUIState> gamesStates = new ArrayList<>();
-    public static int currentState;
+    private final List<GUIState> gamesStates = new ArrayList<>();
+
     public static final int MAIN_MENU = 0;
     public static final int HELP = 1;
     public static final int SET_DIFFICULTY = 2;
     public static final int SKIRMISH = 3;
     public static final int STATISTICS = 4;
+
+    private int currentState;
 
     public GUIStateManager() {
         currentState = MAIN_MENU;
@@ -26,8 +28,16 @@ public class GUIStateManager {
     }
 
     public void setStates(int state) {
-        currentState = state;
-        gamesStates.get(currentState).init();
+        setCurrentState(state);
+        gamesStates.get(getCurrentState()).init();
+    }
+
+    public int getCurrentState() {
+        return currentState;
+    }
+
+    public void setCurrentState(int currentState) {
+        this.currentState = currentState;
     }
 
     public void update() {
@@ -36,15 +46,15 @@ public class GUIStateManager {
 
 
     public void draw(Graphics g) {
-        gamesStates.get(currentState).draw(g);
+        gamesStates.get(getCurrentState()).draw(g);
     }
 
     public void keyPressed(KeyEvent key) {
-        gamesStates.get(currentState).onKeyPressed(key);
+        gamesStates.get(getCurrentState()).onKeyPressed(key);
     }
 
 
     public void keyReleased(KeyEvent key) {
-        gamesStates.get(currentState).onKeyReleased(key);
+        gamesStates.get(getCurrentState()).onKeyReleased(key);
     }
 }

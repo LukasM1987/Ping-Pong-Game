@@ -2,13 +2,13 @@ package com.pingponggame;;
 import java.awt.*;
 import java.util.Random;
 
-public class Ball implements BallInterface {
+public class Ball {
 
     private static final Random random = new Random();
-    private static int initialSpeed = 2;
+    private static int INITIAL_SPEED = 2;
 
-    public int ballHorizontalVelocity;
-    public int ballVerticalVelocity;
+    private int horizontalVelocity;
+    private int verticalVelocity;
 
     private Rectangle rectangle;
 
@@ -17,7 +17,6 @@ public class Ball implements BallInterface {
         initBall();
     }
 
-    @Override
     public void initBall() {
         int randomXDirection = random.nextInt(2);
         int randomYDirection = random.nextInt(2);
@@ -25,32 +24,28 @@ public class Ball implements BallInterface {
             randomXDirection--;
         }
 
-        setXDirection(randomXDirection * initialSpeed);
+        setXDirection(randomXDirection * INITIAL_SPEED);
 
         if (randomYDirection == 0) {
             randomYDirection--;
         }
 
-        setYDirection(randomYDirection * initialSpeed);
+        setYDirection(randomYDirection * INITIAL_SPEED);
     }
 
-    @Override
     public void setXDirection(int randomXDirection) {
-        ballHorizontalVelocity = randomXDirection;
+        horizontalVelocity = randomXDirection;
     }
 
-    @Override
     public void setYDirection(int randomYDirection) {
-        ballVerticalVelocity = randomYDirection;
+        verticalVelocity = randomYDirection;
     }
 
-    @Override
     public void move() {
-        rectangle.x += ballHorizontalVelocity;
-        rectangle.y += ballVerticalVelocity;
+        rectangle.x += horizontalVelocity;
+        rectangle.y += verticalVelocity;
     }
 
-    @Override
     public void draw(Graphics g) {
         g.setColor(new Color(241, 144, 39));
         g.fillOval(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
@@ -69,11 +64,26 @@ public class Ball implements BallInterface {
     }
 
     public int getYVelocity() {
-        return ballVerticalVelocity;
+        return verticalVelocity;
     }
 
     public int getXVelocity() {
-        return ballHorizontalVelocity;
+        return horizontalVelocity;
     }
 
+    public void setHorizontalVelocity(int horizontalVelocity) {
+        this.horizontalVelocity = horizontalVelocity;
+    }
+
+    public void increaseHorizontalVelocity() {
+        horizontalVelocity++;
+    }
+
+    public void increaseVerticalVelocity() {
+        verticalVelocity++;
+    }
+
+    public void reduceVerticalVelocity() {
+        verticalVelocity--;
+    }
 }

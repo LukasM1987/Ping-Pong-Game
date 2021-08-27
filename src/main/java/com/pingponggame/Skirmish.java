@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Skirmish extends GUIState implements SkirmishInterface {
+public class Skirmish extends GUIState {
 
     private static final int PADDLE_WIDTH = 25;
     private static final int PADDLE_HEIGHT = 100;
@@ -41,45 +41,6 @@ public class Skirmish extends GUIState implements SkirmishInterface {
     }
 
     @Override
-    public void newPaddles() {
-        player = new Paddle(0, (GameEngine.HEIGHT / 2) - (PADDLE_HEIGHT / 2), PADDLE_WIDTH, PADDLE_HEIGHT);
-        enemy = new Enemy(GameEngine.WIDTH - PADDLE_WIDTH, (GameEngine.HEIGHT / 2) - PADDLE_HEIGHT / 2, PADDLE_WIDTH, PADDLE_HEIGHT);
-        randomEnemyStrategy();
-    }
-
-    @Override
-    public void newBall() {
-        ball = new Ball((GameEngine.WIDTH / 2) - (BALL_DIAMETER / 2), (GameEngine.HEIGHT / 2 - BALL_DIAMETER / 2), BALL_DIAMETER, BALL_DIAMETER);
-        ballTouchPaddle = 0;
-        clearBallVerticalPositionDifficultFailStrategy();
-    }
-
-    @Override
-    public boolean setRoundDifficulty(int enemyMistake, int setDifficulty) {
-        if (enemyMistake < setDifficulty) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public void enemyStrategy() {
-
-        if (setRoundDifficulty(randomEnemyMistake, DifficultyMenu.difficultyPercent)) {
-            if (randomDifficultyStrategy == EnemyStrategy.HARD_STRATEGY_WITHOUT_FAIL.getStrategyCase()) {
-                enemyDifficultStrategy();
-            } else if (randomDifficultyStrategy == EnemyStrategy.HARD_STRATEGY_WITH_FAIL.getStrategyCase()) {
-                enemyDifficultStrategyWithFail();
-            } else if (randomDifficultyStrategy == EnemyStrategy.MEDIUM_STRATEGY.getStrategyCase()) {
-                enemyMediumStrategy();
-            }
-        } else {
-            enemyEasyStrategy();
-        }
-    }
-
-    @Override
     public void init() {
         newPaddles();
         newBall();
@@ -87,100 +48,6 @@ public class Skirmish extends GUIState implements SkirmishInterface {
             backgroundImage = ImageIO.read(backgroundFile);
         } catch (Exception e){
             e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void checkBallPaddleCollision() {
-        checkPlayerCollision();
-        checkEnemyCollision();
-    }
-
-    @Override
-    public void checkBallFrameCollision() {
-        if (ball.getVerticalPos() <= 0) {
-            ball.setYDirection(-ball.ballVerticalVelocity);
-        }
-
-        if (ball.getVerticalPos() >= GameEngine.HEIGHT - BALL_DIAMETER) {
-            ball.setYDirection(-ball.ballVerticalVelocity);
-        }
-    }
-
-    @Override
-    public void checkPaddleFrameCollision() {
-        if (player.getVerticalPos() <= 0) {
-            player.setVerticalPos(0);
-        }
-
-        if (player.getVerticalPos() >= GameEngine.HEIGHT - PADDLE_HEIGHT) {
-            player.setVerticalPos(GameEngine.HEIGHT - PADDLE_HEIGHT);
-        }
-    }
-
-    @Override
-    public void givePlayerPoint() {
-        if (ball.getHorizontalPos() > GameEngine.WIDTH) {
-            newBall();
-            newPaddles();
-            scores.scorePlayer1++;
-            if (scores.scorePlayer1 == MAX_POINTS) {
-                checkSetWinner();
-                scores.scorePlayer1 = 0;
-                scores.scorePlayer2 = 0;
-            }
-        }
-    }
-
-    @Override
-    public void giveEnemyPoint() {
-        if (ball.getHorizontalPos() + BALL_DIAMETER < 0) {
-            newBall();
-            newPaddles();
-            scores.scorePlayer2++;
-            if (scores.scorePlayer2 == MAX_POINTS) {
-                checkSetWinner();
-                scores.scorePlayer1 = 0;
-                scores.scorePlayer2 = 0;
-            }
-        }
-    }
-
-    @Override
-    public void addPlayer1Score() {
-        Scores.player1Scores.add(scores.scorePlayer1);
-    }
-
-    @Override
-    public void addPlayer2Score() {
-        Scores.player2Scores.add(scores.scorePlayer2);
-    }
-
-    @Override
-    public void checkSetWinner() {
-        if (scores.scorePlayer1 == MAX_POINTS) {
-            addPlayer1Score();
-            addPlayer2Score();
-            Scores.setWinPlayer1++;
-        }
-
-        if (scores.scorePlayer2 == MAX_POINTS) {
-            addPlayer1Score();
-            addPlayer2Score();
-            Scores.setWinPlayer2++;
-        }
-    }
-
-    @Override
-    public void checkWhoWinSkirmish() {
-        if (Scores.setWinPlayer1 == Sets.TWO_WINS.getSetWins() && Scores.setWinPlayer2 == Sets.ZERO_WINS.getSetWins()) {
-            GUIStateManager.setStates(GUIStateManager.STATISTICS);
-        } else if (Scores.setWinPlayer2 == Sets.TWO_WINS.getSetWins() && Scores.setWinPlayer1 == Sets.ZERO_WINS.getSetWins()) {
-            GUIStateManager.setStates(GUIStateManager.STATISTICS);
-        } else if (Scores.setWinPlayer1 == Sets.TWO_WINS.getSetWins() && Scores.setWinPlayer2 == Sets.ONE_WIN.getSetWins()) {
-            GUIStateManager.setStates(GUIStateManager.STATISTICS);
-        } else if (Scores.setWinPlayer2 == Sets.TWO_WINS.getSetWins() && Scores.setWinPlayer1 == Sets.ONE_WIN.getSetWins()) {
-            GUIStateManager.setStates(GUIStateManager.STATISTICS);
         }
     }
 
@@ -222,9 +89,113 @@ public class Skirmish extends GUIState implements SkirmishInterface {
         return PADDLE_HEIGHT / 2 - BALL_DIAMETER / 2 - 1;
     }
 
-    @Override
     public int enemyIntersectsLowerFrameEdge() {
         return GameEngine.HEIGHT - PADDLE_HEIGHT / 2 - BALL_DIAMETER / 2  + 2;
+    }
+
+    public boolean setRoundDifficulty(int enemyMistake, int setDifficulty) {
+        if (enemyMistake < setDifficulty) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void newPaddles() {
+        player = new Paddle(0, (GameEngine.HEIGHT / 2) - (PADDLE_HEIGHT / 2), PADDLE_WIDTH, PADDLE_HEIGHT);
+        enemy = new Enemy(GameEngine.WIDTH - PADDLE_WIDTH, (GameEngine.HEIGHT / 2) - PADDLE_HEIGHT / 2, PADDLE_WIDTH, PADDLE_HEIGHT);
+        randomEnemyStrategy();
+    }
+
+    private void newBall() {
+        ball = new Ball((GameEngine.WIDTH / 2) - (BALL_DIAMETER / 2), (GameEngine.HEIGHT / 2 - BALL_DIAMETER / 2), BALL_DIAMETER, BALL_DIAMETER);
+        ballTouchPaddle = 0;
+        clearBallVerticalPositionDifficultFailStrategy();
+    }
+
+    private void checkBallPaddleCollision() {
+        checkPlayerCollision();
+        checkEnemyCollision();
+    }
+
+    private void checkBallFrameCollision() {
+        if (ball.getVerticalPos() <= 0) {
+            ball.setYDirection(-ball.getYVelocity());
+        }
+
+        if (ball.getVerticalPos() >= GameEngine.HEIGHT - BALL_DIAMETER) {
+            ball.setYDirection(-ball.getYVelocity());
+        }
+    }
+
+    private void checkPaddleFrameCollision() {
+        if (player.getVerticalPos() <= 0) {
+            player.setVerticalPos(0);
+        }
+
+        if (player.getVerticalPos() >= GameEngine.HEIGHT - PADDLE_HEIGHT) {
+            player.setVerticalPos(GameEngine.HEIGHT - PADDLE_HEIGHT);
+        }
+    }
+
+    private void givePlayerPoint() {
+        if (ball.getHorizontalPos() > GameEngine.WIDTH) {
+            newBall();
+            newPaddles();
+            scores.scorePlayer1++;
+            if (scores.scorePlayer1 == MAX_POINTS) {
+                checkSetWinner();
+                scores.scorePlayer1 = 0;
+                scores.scorePlayer2 = 0;
+            }
+        }
+    }
+
+    private void giveEnemyPoint() {
+        if (ball.getHorizontalPos() + BALL_DIAMETER < 0) {
+            newBall();
+            newPaddles();
+            scores.scorePlayer2++;
+            if (scores.scorePlayer2 == MAX_POINTS) {
+                checkSetWinner();
+                scores.scorePlayer1 = 0;
+                scores.scorePlayer2 = 0;
+            }
+        }
+    }
+
+    private void addPlayer1Score() {
+        Scores.player1Scores.add(scores.scorePlayer1);
+    }
+
+    private void addPlayer2Score() {
+        Scores.player2Scores.add(scores.scorePlayer2);
+    }
+
+    private void checkSetWinner() {
+        if (scores.scorePlayer1 == MAX_POINTS) {
+            addPlayer1Score();
+            addPlayer2Score();
+            Scores.setWinPlayer1++;
+        }
+
+        if (scores.scorePlayer2 == MAX_POINTS) {
+            addPlayer1Score();
+            addPlayer2Score();
+            Scores.setWinPlayer2++;
+        }
+    }
+
+    private void checkWhoWinSkirmish() {
+        if (Scores.setWinPlayer1 == Sets.TWO_WINS.getSetWins() && Scores.setWinPlayer2 == Sets.ZERO_WINS.getSetWins()) {
+            GUIStateManager.setStates(GUIStateManager.STATISTICS);
+        } else if (Scores.setWinPlayer2 == Sets.TWO_WINS.getSetWins() && Scores.setWinPlayer1 == Sets.ZERO_WINS.getSetWins()) {
+            GUIStateManager.setStates(GUIStateManager.STATISTICS);
+        } else if (Scores.setWinPlayer1 == Sets.TWO_WINS.getSetWins() && Scores.setWinPlayer2 == Sets.ONE_WIN.getSetWins()) {
+            GUIStateManager.setStates(GUIStateManager.STATISTICS);
+        } else if (Scores.setWinPlayer2 == Sets.TWO_WINS.getSetWins() && Scores.setWinPlayer1 == Sets.ONE_WIN.getSetWins()) {
+            GUIStateManager.setStates(GUIStateManager.STATISTICS);
+        }
     }
 
     private void randomEnemyStrategy() {
@@ -235,13 +206,13 @@ public class Skirmish extends GUIState implements SkirmishInterface {
 
     private void checkEnemyCollision() {
         if (ball.intersects(enemy.getRectangle())) {
-            ball.ballHorizontalVelocity = Math.abs(ball.getXVelocity());
+            ball.setHorizontalVelocity(Math.abs(ball.getXVelocity()));
             if (DifficultyMenu.difficultyPercent >= SPEED_UP_BALL_WHEN_DIFFICULTY_IS_HIGHER_THEN_55) {
-                ball.ballHorizontalVelocity++;
+                ball.increaseHorizontalVelocity();
                 if (ball.getYVelocity() > 0) {
-                    ball.ballVerticalVelocity++;
+                    ball.increaseVerticalVelocity();
                 } else {
-                    ball.ballVerticalVelocity--;
+                    ball.reduceVerticalVelocity();
                 }
             }
             ball.setXDirection(-ball.getXVelocity());
@@ -251,13 +222,14 @@ public class Skirmish extends GUIState implements SkirmishInterface {
 
     private void checkPlayerCollision() {
         if (ball.intersects(player.getRectangle())) {
-            ball.ballHorizontalVelocity = Math.abs(ball.getXVelocity());
+            //ball.horizontalVelocity = Math.abs(ball.getXVelocity());
+            ball.setHorizontalVelocity(Math.abs(ball.getXVelocity()));
             if (DifficultyMenu.difficultyPercent >= SPEED_UP_BALL_WHEN_DIFFICULTY_IS_HIGHER_THEN_55) {
-                ball.ballHorizontalVelocity++;
+                ball.increaseHorizontalVelocity();
                 if (ball.getYVelocity() > 0) {
-                    ball.ballVerticalVelocity++;
+                    ball.increaseVerticalVelocity();
                 } else {
-                    ball.ballVerticalVelocity--;
+                    ball.reduceVerticalVelocity();
                 }
             }
             ball.setXDirection(ball.getXVelocity());
@@ -342,6 +314,22 @@ public class Skirmish extends GUIState implements SkirmishInterface {
             enemy.setVerticalPos(enemyDifficultStrategyFailVerticalPosition());
         }
     }
+
+    private void enemyStrategy() {
+
+        if (setRoundDifficulty(randomEnemyMistake, DifficultyMenu.difficultyPercent)) {
+            if (randomDifficultyStrategy == EnemyStrategy.HARD_STRATEGY_WITHOUT_FAIL.getStrategyCase()) {
+                enemyDifficultStrategy();
+            } else if (randomDifficultyStrategy == EnemyStrategy.HARD_STRATEGY_WITH_FAIL.getStrategyCase()) {
+                enemyDifficultStrategyWithFail();
+            } else if (randomDifficultyStrategy == EnemyStrategy.MEDIUM_STRATEGY.getStrategyCase()) {
+                enemyMediumStrategy();
+            }
+        } else {
+            enemyEasyStrategy();
+        }
+    }
+
     private void clearBallVerticalPositionDifficultFailStrategy() {
         ballVerticalYPosition.clear();
     }

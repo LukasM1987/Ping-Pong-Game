@@ -39,25 +39,15 @@ public class Statistics extends GUIState {
 
     @Override
     public void draw(Graphics g) {
+        drawGraphics(g);
+        drawSkirmishResult(g);
+        drawMenuOption(g);
+    }
+
+    private void drawGraphics(Graphics g) {
         g.drawImage(backgroundImage, 0, 0, null);
         g.drawImage(blackPaddleImage, (GameEngine.WIDTH / 2) + 195, 10, null);
         g.drawImage(redPaddleImage, 165, 10, null);
-        g.setColor(new Color(128, 0 ,0 ));
-        g.setFont(new Font("Amazon", Font.PLAIN, 68));
-        g.drawString("STATISTICS",(GameEngine.WIDTH / 2) - 190, 70);
-        g.setFont(new Font("Arial", Font.PLAIN, 22));
-        g.setColor(Color.WHITE);
-        g.drawString("Player 1 sets win: " + Scores.setWinPlayer1, (GameEngine.WIDTH / 2) - 290, (GameEngine.HEIGHT / 2) - 16);
-        g.drawString("Computer sets win: " + Scores.setWinPlayer2, (GameEngine.WIDTH / 2) + 100, (GameEngine.HEIGHT / 2) - 16);
-        for (int i = 0; i < Scores.player1Scores.size(); i++) {
-            g.drawString("Set " + (i + 1) + ": " + Scores.player1Scores.get(i), (GameEngine.WIDTH / 2) - 236, (GameEngine.HEIGHT / 2) + 14 + (i * 24));
-        }
-        for (int i = 0; i < Scores.player2Scores.size(); i++) {
-            g.drawString("Set " + (i + 1) + ": " + Scores.player2Scores.get(i), (GameEngine.WIDTH / 2) + 156, (GameEngine.HEIGHT / 2) + 14 + (i * 24));
-        }
-        g.setFont(new Font("Arial", Font.PLAIN, 22));
-        g.setColor(Color.YELLOW);
-        g.drawString("BACK TO MAIN MENU", (GameEngine.WIDTH / 2) - 110, GameEngine.HEIGHT - 80);
     }
 
     @Override
@@ -79,5 +69,27 @@ public class Statistics extends GUIState {
 
     private void selectMenuOption() {
         GUIStateManager.setStates(GUIStateManager.MAIN_MENU);
+    }
+
+    private void drawSkirmishResult(Graphics g) {
+        g.setColor(new Color(128, 0 ,0 ));
+        g.setFont(new Font("Amazon", Font.PLAIN, 68));
+        g.drawString("STATISTICS",(GameEngine.WIDTH / 2) - 190, 70);
+        g.setFont(new Font("Arial", Font.PLAIN, 22));
+        g.setColor(Color.WHITE);
+        g.drawString("Player  sets  win: " + Scores.setWinPlayer1, (GameEngine.WIDTH / 2) - 290, (GameEngine.HEIGHT / 2) - 16);
+        g.drawString("Computer sets win: " + Scores.setWinPlayer2, (GameEngine.WIDTH / 2) + 100, (GameEngine.HEIGHT / 2) - 16);
+        for (int i = 0; i < Scores.player1Scores.size(); i++) {
+            g.drawString("Set " + (i + 1) + ": " + Scores.player1Scores.get(i), (GameEngine.WIDTH / 2) - 236, (GameEngine.HEIGHT / 2) + 14 + (i * 24));
+        }
+        for (int i = 0; i < Scores.player2Scores.size(); i++) {
+            g.drawString("Set " + (i + 1) + ": " + Scores.player2Scores.get(i), (GameEngine.WIDTH / 2) + 156, (GameEngine.HEIGHT / 2) + 14 + (i * 24));
+        }
+    }
+
+    private void drawMenuOption(Graphics g) {
+        g.setFont(new Font("Arial", Font.PLAIN, 22));
+        g.setColor(Color.YELLOW);
+        g.drawString("BACK TO   MAIN MENU", (GameEngine.WIDTH / 2) - 110, GameEngine.HEIGHT - 80);
     }
 }

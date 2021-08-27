@@ -19,10 +19,6 @@ public class Field {
         return rectangle;
     }
 
-    public int getHorizontalPos() {
-        return rectangle.y;
-    }
-
     public void setHorizontalPos(int pos) {
         this.rectangle.x = pos;
     }

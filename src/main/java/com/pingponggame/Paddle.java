@@ -3,23 +3,21 @@ package com.pingponggame;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
-public class Paddle implements PaddleInterface {
+public class Paddle {
 
     private static final int ballSpeed = 10;
 
-    private int paddleVerticalVelocity;
+    private int verticalVelocity;
     private Rectangle rectangle;
 
     public Paddle(int xPosition, int yPosition, int PADDLE_WIDTH, int PADDLE_HEIGHT) {
         rectangle = new Rectangle(xPosition, yPosition, PADDLE_WIDTH, PADDLE_HEIGHT);
     }
 
-    @Override
     public void setYDirection(int yDirection) {
-        paddleVerticalVelocity = yDirection;
+        verticalVelocity = yDirection;
     }
 
-    @Override
     public void movePaddle(KeyEvent key) {
 
         if (key.getKeyCode() == KeyEvent.VK_W) {
@@ -39,7 +37,6 @@ public class Paddle implements PaddleInterface {
         }
     }
 
-    @Override
     public void stopPaddle(KeyEvent key) {
 
         if (key.getKeyCode() == KeyEvent.VK_W) {
@@ -59,12 +56,10 @@ public class Paddle implements PaddleInterface {
         }
     }
 
-    @Override
     public void move() {
-        rectangle.y += paddleVerticalVelocity;
+        rectangle.y += verticalVelocity;
     }
 
-    @Override
     public void draw(Graphics g) {
         g.setColor(Color.BLACK);
         g.fillRect(rectangle.x, rectangle.y ,rectangle.width, rectangle.height);
