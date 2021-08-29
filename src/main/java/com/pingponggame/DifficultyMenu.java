@@ -81,12 +81,14 @@ public class DifficultyMenu extends GUIState {
 
     private void selectMenuOption(){
         if(currentChoiceMenu == 0){
-            GUIStateManager.setStates(GUIStateManager.SKIRMISH);
+            GUIStateManager.setStates(GUIStateManager.SINGLE_PLAYER);
         }
 
         if(currentChoiceMenu == 1){
             GUIStateManager.setStates(GUIStateManager.MAIN_MENU);
+            MainMenu.getMode().clear();
             difficultyPercent = 0;
+            currentChoiceMenu = 0;
         }
     }
 

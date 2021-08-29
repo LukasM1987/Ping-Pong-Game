@@ -5,15 +5,19 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainMenu extends GUIState {
 
-
-    private int currentChoice = 0;
-    private static final String[] options = {"NEW GAME", "     HELP", "      EXIT"};
+    private static final String[] options = {"SINGLE PLAYER", " MULTI PLAYER", "        HELP", "         EXIT"};
     private static final File backgroundFile = new File("src/main/resources/static/pongMenu.jpg");
     private static final File pongLogo = new File("src/main/resources/static/logo.png");
+    private static final List<Integer> gameMode = new ArrayList<>();
+
+    private static int currentChoice = 0;
+
     private BufferedImage backgroundImage;
     private BufferedImage logoImage;
 
@@ -36,7 +40,14 @@ public class MainMenu extends GUIState {
     public void draw(Graphics g){
         drawGraphics(g);
         drawMenuOptions(g);
+    }
 
+    public static int setCurrentChoice(int choice) {
+        return currentChoice = choice;
+    }
+
+    public static List<Integer> getMode() {
+        return gameMode;
     }
 
     private void drawGraphics(Graphics g) {
@@ -52,35 +63,46 @@ public class MainMenu extends GUIState {
             } else {
                 g.setColor(Color.WHITE);
             }
-            g.drawString(options[i], (GameEngine.WIDTH / 2) - 80, 260 + i * 30);
+            g.drawString(options[i], (GameEngine.WIDTH / 2) - 110, 250 + i * 30);
         }
     }
 
-    private void selectMenuOption(){
+    private void addMode(int choice) {
+        gameMode.add(choice);
+    }
+
+    private int selectMenuOption(){
         if(currentChoice == 0){
             GUIStateManager.setStates(GUIStateManager.SET_DIFFICULTY);
         }
 
-        if(currentChoice == 1){
-            GUIStateManager.setStates(GUIStateManager.HELP);
+        if (currentChoice == 1) {
+            GUIStateManager.setStates(GUIStateManager.MULTI_PLAYER);
         }
 
         if(currentChoice == 2){
+            GUIStateManager.setStates(GUIStateManager.HELP);
+        }
+
+        if(currentChoice == 3){
             exitGame();
         }
+        return currentChoice;
     }
 
     @Override
     public void onKeyPressed(KeyEvent key){
         if (key.getKeyCode() == KeyEvent.VK_ENTER) {
-            selectMenuOption();
+            addMode(selectMenuOption());
         }
+
         if (key.getKeyCode() == KeyEvent.VK_UP || key.getKeyCode() == KeyEvent.VK_W) {
             currentChoice--;
             if (currentChoice == -1) {
                 currentChoice = options.length - 1;
             }
         }
+
         if (key.getKeyCode() == KeyEvent.VK_DOWN || key.getKeyCode() == KeyEvent.VK_S) {
             currentChoice++;
             if (currentChoice == options.length) {

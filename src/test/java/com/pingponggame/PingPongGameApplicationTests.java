@@ -6,55 +6,55 @@ class PingPongGameApplicationTests {
 
     @Test
     void enemyStrategyTrueTest() {
-        //When
-        Skirmish skirmish = new Skirmish(null);
+        //Given
+        SinglePlayer singlePlayer = new SinglePlayer(null);
 
         int enemyMistake = 30;
-        int setedDificulty = 60;
+        int setDifficulty = 60;
+
+        //When
+        boolean result = singlePlayer.setRoundDifficulty(enemyMistake, setDifficulty);
 
         //Then
-        boolean result = skirmish.setRoundDifficulty(enemyMistake, setedDificulty);
-
-        //Given
         Assertions.assertTrue(result);
     }
 
     @Test
     void enemyStrategyFalseTest() {
-        //When
-        Skirmish skirmish = new Skirmish(null);
+        //Given
+        SinglePlayer singlePlayer = new SinglePlayer(null);
 
         int enemyMistake = 76;
-        int setedDificulty = 60;
+        int setDifficulty = 60;
+
+        //When
+        boolean result = singlePlayer.setRoundDifficulty(enemyMistake, setDifficulty);
 
         //Then
-        boolean result = skirmish.setRoundDifficulty(enemyMistake, setedDificulty);
-
-        //Given
         Assertions.assertFalse(result);
     }
 
     @Test
     void enemyLowerEdgeTest() {
+        //Given
+        SinglePlayer singlePlayer = new SinglePlayer(null);
+
         //When
-        Skirmish skirmish = new Skirmish(null);
+        int result  = singlePlayer.enemyIntersectsLowerFrameEdge();
 
         //Then
-        int result  = skirmish.enemyIntersectsLowerFrameEdge();
-
-        //Given
         Assertions.assertEquals(422, result);
     }
 
     @Test
     void enemyUpperEdgeTest() {
+        //Given
+        SinglePlayer singlePlayer = new SinglePlayer(null);
+
         //When
-        Skirmish skirmish = new Skirmish(null);
+        int result  = singlePlayer.enemyIntersectsUpperFrameEdge();
 
         //Then
-        int result  = skirmish.enemyIntersectsUpperFrameEdge();
-
-        //Given
         Assertions.assertEquals(39, result);
     }
 }

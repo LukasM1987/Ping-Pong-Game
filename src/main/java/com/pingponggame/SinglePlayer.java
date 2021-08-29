@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Skirmish extends GUIState {
+public class SinglePlayer extends GUIState implements SkirmishInterface {
 
     private static final int PADDLE_WIDTH = 25;
     private static final int PADDLE_HEIGHT = 100;
@@ -17,6 +17,7 @@ public class Skirmish extends GUIState {
     private static final int MAX_POINTS = 11;
     private static final int FIELD_HEIGHT = 124;
     private static final int FIELD_WIDTH = 1;
+    private static final int GAME_MODE = 1;
     private static final int BALL_VERTICAL_POSITION_INDEX = 0;
     private static final int SPEED_UP_BALL_WHEN_DIFFICULTY_IS_HIGHER_THEN_55 = 55;
     private static final List<Integer> ballVerticalYPosition = new ArrayList<>();
@@ -34,7 +35,7 @@ public class Skirmish extends GUIState {
     private Ball ball;
     private Scores scores;
 
-    public Skirmish(GUIStateManager GUIStateManager) {
+    public SinglePlayer(GUIStateManager GUIStateManager) {
         this.GUIStateManager = GUIStateManager;
         this.scores = new Scores();
         init();
@@ -85,6 +86,34 @@ public class Skirmish extends GUIState {
         player.stopPaddle(key);
     }
 
+    @Override
+    public void checkPaddleFrameCollision() {
+        if (player.getVerticalPos() <= 0) {
+            player.setVerticalPos(0);
+        }
+
+        if (player.getVerticalPos() >= GameEngine.HEIGHT - PADDLE_HEIGHT) {
+            player.setVerticalPos(GameEngine.HEIGHT - PADDLE_HEIGHT);
+        }
+    }
+
+    @Override
+    public void checkBallPaddleCollision() {
+        checkPlayerCollision();
+        checkEnemyCollision();
+    }
+
+    @Override
+    public void checkBallFrameCollision() {
+        if (ball.getVerticalPos() <= 0) {
+            ball.setYDirection(-ball.getYVelocity());
+        }
+
+        if (ball.getVerticalPos() >= GameEngine.HEIGHT - BALL_DIAMETER) {
+            ball.setYDirection(-ball.getYVelocity());
+        }
+    }
+
     public int enemyIntersectsUpperFrameEdge() {
         return PADDLE_HEIGHT / 2 - BALL_DIAMETER / 2 - 1;
     }
@@ -101,44 +130,22 @@ public class Skirmish extends GUIState {
         }
     }
 
-    private void newPaddles() {
-        player = new Paddle(0, (GameEngine.HEIGHT / 2) - (PADDLE_HEIGHT / 2), PADDLE_WIDTH, PADDLE_HEIGHT);
+    @Override
+    public void newPaddles() {
+        player = new Paddle(0, (GameEngine.HEIGHT / 2) - (PADDLE_HEIGHT / 2), PADDLE_WIDTH, PADDLE_HEIGHT, GAME_MODE, 0);
         enemy = new Enemy(GameEngine.WIDTH - PADDLE_WIDTH, (GameEngine.HEIGHT / 2) - PADDLE_HEIGHT / 2, PADDLE_WIDTH, PADDLE_HEIGHT);
         randomEnemyStrategy();
     }
 
-    private void newBall() {
+    @Override
+    public void newBall() {
         ball = new Ball((GameEngine.WIDTH / 2) - (BALL_DIAMETER / 2), (GameEngine.HEIGHT / 2 - BALL_DIAMETER / 2), BALL_DIAMETER, BALL_DIAMETER);
         ballTouchPaddle = 0;
         clearBallVerticalPositionDifficultFailStrategy();
     }
 
-    private void checkBallPaddleCollision() {
-        checkPlayerCollision();
-        checkEnemyCollision();
-    }
-
-    private void checkBallFrameCollision() {
-        if (ball.getVerticalPos() <= 0) {
-            ball.setYDirection(-ball.getYVelocity());
-        }
-
-        if (ball.getVerticalPos() >= GameEngine.HEIGHT - BALL_DIAMETER) {
-            ball.setYDirection(-ball.getYVelocity());
-        }
-    }
-
-    private void checkPaddleFrameCollision() {
-        if (player.getVerticalPos() <= 0) {
-            player.setVerticalPos(0);
-        }
-
-        if (player.getVerticalPos() >= GameEngine.HEIGHT - PADDLE_HEIGHT) {
-            player.setVerticalPos(GameEngine.HEIGHT - PADDLE_HEIGHT);
-        }
-    }
-
-    private void givePlayerPoint() {
+    @Override
+    public void givePlayerPoint() {
         if (ball.getHorizontalPos() > GameEngine.WIDTH) {
             newBall();
             newPaddles();
@@ -151,28 +158,8 @@ public class Skirmish extends GUIState {
         }
     }
 
-    private void giveEnemyPoint() {
-        if (ball.getHorizontalPos() + BALL_DIAMETER < 0) {
-            newBall();
-            newPaddles();
-            scores.scorePlayer2++;
-            if (scores.scorePlayer2 == MAX_POINTS) {
-                checkSetWinner();
-                scores.scorePlayer1 = 0;
-                scores.scorePlayer2 = 0;
-            }
-        }
-    }
-
-    private void addPlayer1Score() {
-        Scores.player1Scores.add(scores.scorePlayer1);
-    }
-
-    private void addPlayer2Score() {
-        Scores.player2Scores.add(scores.scorePlayer2);
-    }
-
-    private void checkSetWinner() {
+    @Override
+    public void checkSetWinner() {
         if (scores.scorePlayer1 == MAX_POINTS) {
             addPlayer1Score();
             addPlayer2Score();
@@ -186,7 +173,16 @@ public class Skirmish extends GUIState {
         }
     }
 
-    private void checkWhoWinSkirmish() {
+    public void addPlayer1Score() {
+        Scores.player1Scores.add(scores.scorePlayer1);
+    }
+
+    public void addPlayer2Score() {
+        Scores.player2Scores.add(scores.scorePlayer2);
+    }
+
+    @Override
+    public void checkWhoWinSkirmish() {
         if (Scores.setWinPlayer1 == Sets.TWO_WINS.getSetWins() && Scores.setWinPlayer2 == Sets.ZERO_WINS.getSetWins()) {
             GUIStateManager.setStates(GUIStateManager.STATISTICS);
         } else if (Scores.setWinPlayer2 == Sets.TWO_WINS.getSetWins() && Scores.setWinPlayer1 == Sets.ZERO_WINS.getSetWins()) {
@@ -195,6 +191,19 @@ public class Skirmish extends GUIState {
             GUIStateManager.setStates(GUIStateManager.STATISTICS);
         } else if (Scores.setWinPlayer2 == Sets.TWO_WINS.getSetWins() && Scores.setWinPlayer1 == Sets.ONE_WIN.getSetWins()) {
             GUIStateManager.setStates(GUIStateManager.STATISTICS);
+        }
+    }
+
+    private void giveEnemyPoint() {
+        if (ball.getHorizontalPos() + BALL_DIAMETER < 0) {
+            newBall();
+            newPaddles();
+            scores.scorePlayer2++;
+            if (scores.scorePlayer2 == MAX_POINTS) {
+                checkSetWinner();
+                scores.scorePlayer1 = 0;
+                scores.scorePlayer2 = 0;
+            }
         }
     }
 
@@ -222,7 +231,6 @@ public class Skirmish extends GUIState {
 
     private void checkPlayerCollision() {
         if (ball.intersects(player.getRectangle())) {
-            //ball.horizontalVelocity = Math.abs(ball.getXVelocity());
             ball.setHorizontalVelocity(Math.abs(ball.getXVelocity()));
             if (DifficultyMenu.difficultyPercent >= SPEED_UP_BALL_WHEN_DIFFICULTY_IS_HIGHER_THEN_55) {
                 ball.increaseHorizontalVelocity();

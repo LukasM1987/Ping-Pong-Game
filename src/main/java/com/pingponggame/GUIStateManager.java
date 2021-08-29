@@ -13,8 +13,9 @@ public class GUIStateManager {
     public static final int MAIN_MENU = 0;
     public static final int HELP = 1;
     public static final int SET_DIFFICULTY = 2;
-    public static final int SKIRMISH = 3;
-    public static final int STATISTICS = 4;
+    public static final int SINGLE_PLAYER = 3;
+    public static final int MULTI_PLAYER = 4;
+    public static final int STATISTICS = 5;
 
     private int currentState;
 
@@ -23,7 +24,8 @@ public class GUIStateManager {
         gamesStates.add(new MainMenu(this));
         gamesStates.add(new Help(this));
         gamesStates.add(new DifficultyMenu(this));
-        gamesStates.add(new Skirmish(this));
+        gamesStates.add(new SinglePlayer(this));
+        gamesStates.add(new MultiPlayer(this));
         gamesStates.add(new Statistics(this));
     }
 

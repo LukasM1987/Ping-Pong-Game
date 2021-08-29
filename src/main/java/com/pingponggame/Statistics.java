@@ -59,6 +59,8 @@ public class Statistics extends GUIState {
             Scores.player1Scores.clear();
             Scores.player2Scores.clear();
             DifficultyMenu.difficultyPercent = 10;
+            MainMenu.getMode().clear();
+            MainMenu.setCurrentChoice(0);
         }
     }
 
@@ -77,8 +79,27 @@ public class Statistics extends GUIState {
         g.drawString("STATISTICS",(GameEngine.WIDTH / 2) - 190, 70);
         g.setFont(new Font("Arial", Font.PLAIN, 22));
         g.setColor(Color.WHITE);
-        g.drawString("Player  sets  win: " + Scores.setWinPlayer1, (GameEngine.WIDTH / 2) - 290, (GameEngine.HEIGHT / 2) - 16);
+        if (MainMenu.getMode().contains(1)) {
+            multiPlayerResult(g);
+        } else if (MainMenu.getMode().contains(0)) {
+            singlePlayerResult(g);
+        }
+    }
+
+    private void singlePlayerResult(Graphics g) {
+        g.drawString("Player 1 sets win: " + Scores.setWinPlayer1, (GameEngine.WIDTH / 2) - 290, (GameEngine.HEIGHT / 2) - 16);
         g.drawString("Computer sets win: " + Scores.setWinPlayer2, (GameEngine.WIDTH / 2) + 100, (GameEngine.HEIGHT / 2) - 16);
+        for (int i = 0; i < Scores.player1Scores.size(); i++) {
+            g.drawString("Set " + (i + 1) + ": " + Scores.player1Scores.get(i), (GameEngine.WIDTH / 2) - 236, (GameEngine.HEIGHT / 2) + 14 + (i * 24));
+        }
+        for (int i = 0; i < Scores.player2Scores.size(); i++) {
+            g.drawString("Set " + (i + 1) + ": " + Scores.player2Scores.get(i), (GameEngine.WIDTH / 2) + 156, (GameEngine.HEIGHT / 2) + 14 + (i * 24));
+        }
+    }
+
+    private void multiPlayerResult(Graphics g) {
+        g.drawString("Player 1 sets win: " + Scores.setWinPlayer1, (GameEngine.WIDTH / 2) - 290, (GameEngine.HEIGHT / 2) - 16);
+        g.drawString("Player 2 sets win: " + Scores.setWinPlayer2, (GameEngine.WIDTH / 2) + 100, (GameEngine.HEIGHT / 2) - 16);
         for (int i = 0; i < Scores.player1Scores.size(); i++) {
             g.drawString("Set " + (i + 1) + ": " + Scores.player1Scores.get(i), (GameEngine.WIDTH / 2) - 236, (GameEngine.HEIGHT / 2) + 14 + (i * 24));
         }
